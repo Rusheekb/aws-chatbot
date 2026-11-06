@@ -19,4 +19,4 @@ response = bedrock_client.converse(
     ]
 )
 
-print(response)
+print(response["output"]["message"]["content"][0]["text"])
