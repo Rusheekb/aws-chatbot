@@ -11,17 +11,22 @@ Keep answers short (2-4 sentences) unless the user asks for more detail.
 If you don't know something, say so instead of guessing."""
 MAX_TOKENS = 300
 TEMPERATURE = 0.7
+
+# Prices in USD per 1 million tokens — check aws.amazon.com/bedrock/pricing
 INPUT_PRICE_PER_M = 0.30
 OUTPUT_PRICE_PER_M = 2.50
 
+
 def calculate_cost(input_tokens, output_tokens):
+    """Return the cost in USD for one request."""
     input_cost = input_tokens / 1_000_000 * INPUT_PRICE_PER_M
     output_cost = output_tokens / 1_000_000 * OUTPUT_PRICE_PER_M
     return input_cost + output_cost
 
+
 messages = []
 total_input_tokens = 0
-total_output_cost = 0
+total_output_tokens = 0
 total_cost = 0.0
 
 print("Chatbot ready! Type 'quit' to exit, 'clear' to forget the conversation.\n")
@@ -31,16 +36,18 @@ while True:
     question = input("You: ").strip()
 
     if question.lower() == "quit":
-        print("Goodbye!")
-        break
-
-    if question.lower() == "clear":
         print("\n--- Session summary ---")
         print(f"Input tokens:  {total_input_tokens:,}")
         print(f"Output tokens: {total_output_tokens:,}")
         print(f"Total cost:    ${total_cost:.6f}")
         print("Goodbye!")
         break
+
+    if question.lower() == "clear":
+        messages.clear()
+        print("Memory cleared.\n")
+        continue
+
     
     if not question:
         continue
