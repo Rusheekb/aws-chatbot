@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -16,6 +17,7 @@ INPUT_PRICE_PER_M = float(os.getenv("INPUT_PRICE_PER_M", "0.30"))
 OUTPUT_PRICE_PER_M = float(os.getenv("OUTPUT_PRICE_PER_M", "2.50"))
 
 PROMPT_FILE = Path(__file__).parent / "system_prompt.txt"
+HISTORY_FILE = Path(__file__).parent / "chat_history.json"
 SYSTEM_PROMPT = PROMPT_FILE.read_text().strip()
 
 bedrock_client = boto3.client('bedrock-runtime')
@@ -34,13 +36,32 @@ def trim_history(history):
     return history[-max_messages:]
 
 
-messages = []
+def load_history():
+    """Load saved messages, or return an empty list if there's nothing valid."""
+    if not HISTORY_FILE.exists():
+        return []
+    try:
+        return json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print("   [Warning: history file is unreadable — starting fresh]")
+        return []
+
+
+def save_history(history):
+    """Write messages to the history file."""
+    HISTORY_FILE.write_text(json.dumps(history, indent=2), encoding="utf-8")
+
+
 total_input_tokens = 0
 total_output_tokens = 0
 total_cost = 0.0
 
 print(f"Chatbot ready! Model: {MODEL_ID} | max tokens: {MAX_TOKENS} | memory: {MAX_TURNS} turns")
 print("Type 'quit' to exit, 'clear' to forget the conversation.\n")
+messages = trim_history(load_history())
+
+if messages:
+    print(f"Restored {len(messages) // 2} turns from your last session.\n")
 
 # chat loop: runs once per question
 while True:
@@ -60,6 +81,7 @@ while True:
 
     if question.lower() == "clear":
         messages.clear()
+        save_history(messages)
         print("Memory cleared.\n")
         continue
     
@@ -110,6 +132,7 @@ while True:
 
     messages.append({"role": "assistant", "content": [{"text": answer}]})
     messages = trim_history(messages)
+    save_history(messages)
 
     if stop_reason == "max_tokens":
         print("   [reply was cut off — hit the max token limit]")
