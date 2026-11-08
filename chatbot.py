@@ -11,6 +11,7 @@ Keep answers short (2-4 sentences) unless the user asks for more detail.
 If you don't know something, say so instead of guessing."""
 MAX_TOKENS = 300
 TEMPERATURE = 0.7
+MAX_TURNS = 3
 
 # Prices in USD per 1 million tokens — check aws.amazon.com/bedrock/pricing
 INPUT_PRICE_PER_M = 0.30
@@ -22,6 +23,12 @@ def calculate_cost(input_tokens, output_tokens):
     input_cost = input_tokens / 1_000_000 * INPUT_PRICE_PER_M
     output_cost = output_tokens / 1_000_000 * OUTPUT_PRICE_PER_M
     return input_cost + output_cost
+
+
+def trim_history(history):
+    """Keep only the most recent MAX_TURNS question/answer pairs."""
+    max_messages = MAX_TURNS * 2
+    return history[-max_messages:]
 
 
 messages = []
@@ -66,6 +73,8 @@ while True:
 
     assistant_message = response["output"]["message"]
     messages.append(assistant_message)
+    messages = trim_history(messages)
+
 
     answer = assistant_message["content"][0]["text"]
     print(f"Bot: {answer}")
@@ -81,4 +90,5 @@ while True:
     total_cost += turn_cost
 
     print(f"   [{usage['inputTokens']} in / {usage['outputTokens']} out"
-          f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}]\n")
+        f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}"
+        f" | memory: {len(messages) // 2}/{MAX_TURNS} turns]\n")
