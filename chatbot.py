@@ -5,7 +5,8 @@ from bot import (
     MAX_TOKENS,
     MAX_TURNS,
     MODEL_ID,
-    Reply,
+    Turn,
+    count_turns,
     load_history,
     save_history,
     trim_history,
@@ -22,7 +23,7 @@ def main():
     messages = trim_history(load_history())
 
     if messages:
-        print(f"Restored {len(messages) // 2} turns from your last session.\n")
+        print(f"Restored {count_turns(messages)} turns from your last session.\n")
 
     # chat loop: runs once per question
     while True:
@@ -49,12 +50,13 @@ def main():
         if not question:
             continue
 
+        start = len(messages)
         messages.append({"role": "user", "content": [{"text": question}]})
-        reply = Reply(messages)
+        turn = Turn(messages)
 
         try:
             print("Bot: ", end="", flush=True)
-            for chunk in reply.stream():
+            for chunk in turn.stream():
                 print(chunk, end="", flush=True)
             print()
         except ClientError as error:
@@ -62,29 +64,31 @@ def main():
             code = error.response["Error"]["Code"]
             detail = error.response["Error"]["Message"]
             print(f"   [AWS error: {code} — {detail}]\n")
-            messages.pop()
+            del messages[start:]
             continue
         except BotoCoreError as error:
             print()
             print(f"   [Connection problem: {error}]\n")
-            messages.pop()
+            del messages[start:]
             continue
 
-        messages.append({"role": "assistant", "content": [{"text": reply.text}]})
         messages = trim_history(messages)
         save_history(messages)
 
-        if reply.stop_reason == "max_tokens":
+        if turn.tools_used:
+            print(f"   [tools used: {', '.join(turn.tools_used)}]")
+
+        if turn.stop_reason == "max_tokens":
             print("   [reply was cut off — hit the max token limit]")
 
-        turn_cost = reply.cost()
-        total_input_tokens += reply.usage["inputTokens"]
-        total_output_tokens += reply.usage["outputTokens"]
+        turn_cost = turn.cost()
+        total_input_tokens += turn.input_tokens
+        total_output_tokens += turn.output_tokens
         total_cost += turn_cost
 
-        print(f"   [{reply.usage['inputTokens']} in / {reply.usage['outputTokens']} out"
+        print(f"   [{turn.input_tokens} in / {turn.output_tokens} out"
               f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}"
-              f" | memory: {len(messages) // 2}/{MAX_TURNS} turns]\n")
+              f" | memory: {count_turns(messages)}/{MAX_TURNS} turns]\n")
 
 
 if __name__ == "__main__":

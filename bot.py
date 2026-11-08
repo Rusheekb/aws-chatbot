@@ -9,6 +9,8 @@ from pathlib import Path
 import boto3
 from dotenv import load_dotenv
 
+from tools import TOOL_CONFIG, run_tool
+
 load_dotenv()
 
 # --- Settings: read from .env, with defaults if missing ---
@@ -18,6 +20,7 @@ TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 MAX_TURNS = int(os.getenv("MAX_TURNS", "3"))
 INPUT_PRICE_PER_M = float(os.getenv("INPUT_PRICE_PER_M", "0.30"))
 OUTPUT_PRICE_PER_M = float(os.getenv("OUTPUT_PRICE_PER_M", "2.50"))
+MAX_TOOL_ROUNDS = 5
 
 BASE_DIR = Path(__file__).parent
 SYSTEM_PROMPT = (BASE_DIR / "system_prompt.txt").read_text(encoding="utf-8").strip()
@@ -33,10 +36,25 @@ def calculate_cost(input_tokens, output_tokens):
     return input_cost + output_cost
 
 
+def turn_starts(history):
+    """Return the positions of real user questions (not tool results)."""
+    return [
+        i for i, message in enumerate(history)
+        if message["role"] == "user" and "text" in message["content"][0]
+    ]
+
+
+def count_turns(history):
+    """Return how many question/answer turns are in the history."""
+    return len(turn_starts(history))
+
+
 def trim_history(history):
-    """Keep only the most recent MAX_TURNS question/answer pairs."""
-    max_messages = MAX_TURNS * 2
-    return history[-max_messages:]
+    """Keep only the most recent MAX_TURNS turns (tool messages stay with their turn)."""
+    starts = turn_starts(history)
+    if len(starts) <= MAX_TURNS:
+        return history
+    return history[starts[-MAX_TURNS]:]
 
 
 def load_history():
@@ -56,15 +74,16 @@ def save_history(history):
 
 
 class Reply:
-    """One streamed reply from Bedrock.
+    """One streamed reply from Bedrock (one model call).
 
     Iterate over reply.stream() to get text chunks as they arrive.
-    Afterwards, reply.text, reply.stop_reason and reply.usage are filled in.
+    Afterwards, text, tool_calls, stop_reason and usage are filled in.
     """
 
     def __init__(self, messages):
         self.messages = messages
         self.text = ""
+        self.tool_calls = []
         self.stop_reason = None
         self.usage = None
 
@@ -78,17 +97,80 @@ class Reply:
                 "maxTokens": MAX_TOKENS,
                 "temperature": TEMPERATURE,
             },
+            toolConfig=TOOL_CONFIG,
         )
         for event in response["stream"]:
-            if "contentBlockDelta" in event:
-                chunk = event["contentBlockDelta"]["delta"].get("text", "")
-                self.text += chunk
-                yield chunk
+            if "contentBlockStart" in event:
+                start = event["contentBlockStart"]["start"]
+                if "toolUse" in start:
+                    self.tool_calls.append({
+                        "toolUseId": start["toolUse"]["toolUseId"],
+                        "name": start["toolUse"]["name"],
+                        "input": "",
+                    })
+            elif "contentBlockDelta" in event:
+                delta = event["contentBlockDelta"]["delta"]
+                if "text" in delta:
+                    self.text += delta["text"]
+                    yield delta["text"]
+                elif "toolUse" in delta:
+                    self.tool_calls[-1]["input"] += delta["toolUse"]["input"]
             elif "messageStop" in event:
                 self.stop_reason = event["messageStop"]["stopReason"]
             elif "metadata" in event:
                 self.usage = event["metadata"]["usage"]
 
+        for call in self.tool_calls:
+            call["input"] = json.loads(call["input"] or "{}")
+
+    def message(self):
+        """Return this reply as an assistant message for the history."""
+        content = []
+        if self.text:
+            content.append({"text": self.text})
+        for call in self.tool_calls:
+            content.append({"toolUse": call})
+        return {"role": "assistant", "content": content}
+
+
+class Turn:
+    """Everything that happens between a user question and the final answer.
+
+    Calls the model, runs any tools it asks for, and calls it again,
+    until it gives a final answer. Appends every step to `messages`.
+    """
+
+    def __init__(self, messages):
+        self.messages = messages
+        self.input_tokens = 0
+        self.output_tokens = 0
+        self.stop_reason = None
+        self.tools_used = []
+
+    def stream(self):
+        """Yield text chunks from every model call in this turn."""
+        for _ in range(MAX_TOOL_ROUNDS):
+            reply = Reply(self.messages)
+            yield from reply.stream()
+
+            self.input_tokens += reply.usage["inputTokens"]
+            self.output_tokens += reply.usage["outputTokens"]
+            self.stop_reason = reply.stop_reason
+            self.messages.append(reply.message())
+
+            if reply.stop_reason != "tool_use":
+                return
+
+            results = []
+            for call in reply.tool_calls:
+                self.tools_used.append(call["name"])
+                results.append(run_tool(call))
+            self.messages.append({"role": "user", "content": results})
+
+        notice = "[Stopped: too many tool calls in one turn]"
+        self.messages.append({"role": "assistant", "content": [{"text": notice}]})
+        yield notice
+
     def cost(self):
-        """Return this reply's cost in USD. Call after streaming finishes."""
-        return calculate_cost(self.usage["inputTokens"], self.usage["outputTokens"])
+        """Return the total cost in USD of every model call in this turn."""
+        return calculate_cost(self.input_tokens, self.output_tokens)
