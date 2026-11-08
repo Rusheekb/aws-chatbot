@@ -1,9 +1,13 @@
-"""Search your own documents using embeddings (a simple RAG system).
+"""Search Learn2Lead's documents using embeddings (a simple RAG system).
 
 Build the index:    python3 rag.py
-Test a search:      python3 rag.py "how much does a plot cost?"
+Test a search:      python3 rag.py "how much does tutoring cost?"
+
+The index rebuilds itself whenever the documents or chunk settings change.
 """
+import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -14,8 +18,8 @@ load_dotenv()
 
 EMBED_MODEL_ID = "amazon.titan-embed-text-v2:0"
 EMBED_DIMENSIONS = 512
-MAX_CHUNK_WORDS = 60
-TOP_K = 3
+MAX_CHUNK_WORDS = int(os.getenv("MAX_CHUNK_WORDS", "60"))
+TOP_K = int(os.getenv("TOP_K", "3"))
 
 BASE_DIR = Path(__file__).parent
 DOCS_DIR = BASE_DIR / "docs"
@@ -59,15 +63,37 @@ def doc_files():
     return sorted(DOCS_DIR.rglob("*.md")) + sorted(DOCS_DIR.rglob("*.txt"))
 
 
+def fingerprint():
+    """A hash of the settings and every document. It changes when anything the index depends on changes."""
+    digest = hashlib.sha256()
+    digest.update(json.dumps([EMBED_MODEL_ID, EMBED_DIMENSIONS, MAX_CHUNK_WORDS]).encode())
+    for path in doc_files():
+        digest.update(path.relative_to(DOCS_DIR).as_posix().encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
 def build_index():
-    """Chunk and embed every document, and save the index."""
-    index = []
+    """Chunk and embed every document, save the index, and return its chunks."""
+    chunks = []
     for path in doc_files():
         source = path.relative_to(DOCS_DIR).as_posix()
         for chunk in split_into_chunks(path.read_text(encoding="utf-8")):
-            index.append({"source": source, "text": chunk, "embedding": embed(chunk)})
+            chunks.append({"source": source, "text": chunk, "embedding": embed(chunk)})
+    index = {"fingerprint": fingerprint(), "chunks": chunks}
     INDEX_FILE.write_text(json.dumps(index), encoding="utf-8")
-    return index
+    return chunks
+
+
+def ensure_index():
+    """Return the index's chunks, rebuilding it first if it's missing or out of date."""
+    if not doc_files():
+        raise ValueError(f"No documents found in {DOCS_DIR}")
+    if INDEX_FILE.exists():
+        index = json.loads(INDEX_FILE.read_text(encoding="utf-8"))
+        if isinstance(index, dict) and index.get("fingerprint") == fingerprint():
+            return index["chunks"]
+    return build_index()
 
 
 def similarity(a, b):
@@ -77,12 +103,10 @@ def similarity(a, b):
 
 def search(query):
     """Return the TOP_K chunks whose meaning is closest to the query."""
-    if not INDEX_FILE.exists():
-        raise ValueError("No document index yet. Run: python3 rag.py")
-    index = json.loads(INDEX_FILE.read_text(encoding="utf-8"))
+    chunks = ensure_index()
     query_embedding = embed(query)
 
-    scored = [(similarity(query_embedding, item["embedding"]), item) for item in index]
+    scored = [(similarity(query_embedding, item["embedding"]), item) for item in chunks]
     scored.sort(key=lambda pair: pair[0], reverse=True)
 
     return [
@@ -99,9 +123,9 @@ def main():
         return
 
     print(f"Indexing documents in {DOCS_DIR.name}/ ...")
-    index = build_index()
-    sources = {item["source"] for item in index}
-    print(f"Indexed {len(index)} chunks from {len(sources)} files into {INDEX_FILE.name}")
+    chunks = build_index()
+    sources = {item["source"] for item in chunks}
+    print(f"Indexed {len(chunks)} chunks from {len(sources)} files into {INDEX_FILE.name}")
 
 
 if __name__ == "__main__":
