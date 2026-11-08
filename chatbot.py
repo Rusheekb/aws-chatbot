@@ -3,20 +3,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# create bedrock client
+# setup: runs once
 bedrock_client = boto3.client('bedrock-runtime')
+MODEL_ID='global.amazon.nova-2-lite-v1:0'
 
-question = "What is 2 + 2? Reply with just the number."
+print("Chatbot ready! Type 'quit to exit.\n")
 
-response = bedrock_client.converse(
+# chat loop: runs once per question
+while True:
+    question = input("You: ").strip()
 
-    modelId='global.amazon.nova-2-lite-v1:0',
-    messages=[
-        {
-            "role": "user",
-            "content": [{"text": question}]
-        }
-    ]
-)
+    if question.lower() == "quit":
+        print("Goodbye!")
+        break
 
-print(response["output"]["message"]["content"][0]["text"])
+    if not question:
+        continue
+
+    response = bedrock_client.converse(
+        modelId=MODEL_ID,
+        messages=[
+            {
+                "role": "user",
+                "content": [{"text": question}]
+            }
+        ]
+    )
+    answer = response["output"]["message"]["content"][0]["text"]
+    print(f"Bot: {answer}\n")
