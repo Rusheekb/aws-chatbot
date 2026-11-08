@@ -9,6 +9,7 @@ A command-line chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
 - Graceful error handling
 - Configurable via `.env` and `system_prompt.txt`
 - Conversation history saved between sessions
+- Web UI built with Streamlit
 
 ## Setup
 1. Create and activate a virtual environment:
@@ -21,10 +22,17 @@ A command-line chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
 4. Make sure the model is enabled in the Bedrock console for your region
 
 ## Usage
+**Terminal:**
 ```bash
 python3 chatbot.py
 ```
 Commands: `clear` resets memory (and the saved history), `quit` exits and shows a cost summary.
+
+**Web UI:**
+```bash
+streamlit run app.py
+```
+Opens at http://localhost:8501. Both interfaces share the same conversation history.
 
 ## Configuration
 | Setting | Default | Description |
