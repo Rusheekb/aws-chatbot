@@ -66,7 +66,7 @@ while True:
     messages.append({"role": "user", "content": [{"text": question}]})
 
     try:
-        response = bedrock_client.converse(
+        response = bedrock_client.converse_stream(
             modelId=MODEL_ID,
             messages=messages,
             system=[{"text": SYSTEM_PROMPT}],
@@ -75,28 +75,42 @@ while True:
                 "temperature": TEMPERATURE,
             },
         )
+
+        print("Bot: ", end="", flush=True)
+        answer = ""
+        stop_reason = None
+        usage = None
+
+        for event in response["stream"]:
+            if "contentBlockDelta" in event:
+                chunk = event["contentBlockDelta"]["delta"].get("text", "")
+                print(chunk, end="", flush=True)
+                answer += chunk
+            elif "messageStop" in event:
+                stop_reason = event["messageStop"]["stopReason"]
+            elif "metadata" in event:
+                usage = event["metadata"]["usage"]
+
+        print()
     except ClientError as error:
+        print()
         code = error.response["Error"]["Code"]
         detail = error.response["Error"]["Message"]
         print(f"   [AWS error: {code} — {detail}]\n")
         messages.pop()
         continue
     except BotoCoreError as error:
+        print()
         print(f"   [Connection problem: {error}]\n")
         messages.pop()
         continue
 
-    assistant_message = response["output"]["message"]
-    messages.append(assistant_message)
+    messages.append({"role": "assistant", "content": [{"text": answer}]})
     messages = trim_history(messages)
 
-    answer = assistant_message["content"][0]["text"]
-    print(f"Bot: {answer}")
-
-    if response["stopReason"] == "max_tokens":
+    if stop_reason == "max_tokens":
         print("   [reply was cut off — hit the max token limit]")
         
-    usage = response["usage"]
     turn_cost = calculate_cost(usage["inputTokens"], usage["outputTokens"])
 
     total_input_tokens += usage["inputTokens"]
