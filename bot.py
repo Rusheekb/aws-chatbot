@@ -146,6 +146,7 @@ class Turn:
         self.output_tokens = 0
         self.stop_reason = None
         self.tools_used = []
+        self.sources = []
 
     def stream(self):
         """Yield text chunks from every model call in this turn."""
@@ -164,12 +165,21 @@ class Turn:
             results = []
             for call in reply.tool_calls:
                 self.tools_used.append(call["name"])
-                results.append(run_tool(call))
+                result = run_tool(call)
+                self._collect_sources(result)
+                results.append(result)
             self.messages.append({"role": "user", "content": results})
 
         notice = "[Stopped: too many tool calls in one turn]"
         self.messages.append({"role": "assistant", "content": [{"text": notice}]})
         yield notice
+
+    def _collect_sources(self, tool_result):
+        """Remember which documents a search returned, in order, without repeats."""
+        for block in tool_result["toolResult"]["content"]:
+            for item in block.get("json", {}).get("results", []):
+                if item["source"] not in self.sources:
+                    self.sources.append(item["source"])
 
     def cost(self):
         """Return the total cost in USD of every model call in this turn."""
