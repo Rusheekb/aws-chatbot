@@ -110,7 +110,7 @@ while True:
 
     if stop_reason == "max_tokens":
         print("   [reply was cut off — hit the max token limit]")
-        
+    
     turn_cost = calculate_cost(usage["inputTokens"], usage["outputTokens"])
 
     total_input_tokens += usage["inputTokens"]
@@ -118,5 +118,5 @@ while True:
     total_cost += turn_cost
 
     print(f"   [{usage['inputTokens']} in / {usage['outputTokens']} out"
-        f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}"
-        f" | memory: {len(messages) // 2}/{MAX_TURNS} turns]\n")
+          f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}"
+          f" | memory: {len(messages) // 2}/{MAX_TURNS} turns]\n")
