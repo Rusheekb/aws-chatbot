@@ -140,3 +140,20 @@ def test_turn_stops_after_max_tool_rounds(fake_bedrock, monkeypatch):
     # The history must still alternate and end on an assistant message, or the next request fails.
     roles = [m["role"] for m in messages]
     assert roles == ["user", "assistant", "user", "assistant", "user", "assistant"]
+
+
+def test_turn_records_sources_from_search_results(fake_bedrock, monkeypatch):
+    monkeypatch.setattr(bot, "run_tool", lambda call: {"toolResult": {
+        "toolUseId": call["toolUseId"], "status": "success",
+        "content": [{"json": {"results": [
+            {"source": "site/pricing.md", "text": "...", "score": 0.5},
+            {"source": "help/buy-hours.md", "text": "...", "score": 0.4},
+            {"source": "site/pricing.md", "text": "...", "score": 0.3},
+        ]}}],
+    }})
+    fake_bedrock(tool_events("search_documents", ['{"query": "price"}']), text_events("$35 an hour"))
+    turn = bot.Turn([user("How much?")])
+
+    list(turn.stream())
+
+    assert turn.sources == ["site/pricing.md", "help/buy-hours.md"]    # in order, no repeats
