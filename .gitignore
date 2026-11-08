@@ -3,3 +3,4 @@ venv/
 __pycache__/
 .DS_Store
 chat_history.json
+doc_index.json

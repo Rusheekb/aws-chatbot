@@ -2,6 +2,8 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from rag import search
+
 
 def get_current_time(timezone="UTC"):
     """Return the current date and time in the given IANA timezone."""
@@ -31,10 +33,16 @@ def calculate(a, b, operation):
     return {"result": result}
 
 
+def search_documents(query):
+    """Search the user's documents and return the most relevant passages."""
+    return {"results": search(query)}
+
+
 # Which Python function runs for each tool name the model can ask for
 TOOL_FUNCTIONS = {
     "get_current_time": get_current_time,
     "calculate": calculate,
+    "search_documents": search_documents,
 }
 
 # What we tell the model about each tool (sent with every request)
@@ -74,6 +82,29 @@ TOOL_CONFIG = {
                             },
                         },
                         "required": ["a", "b", "operation"],
+                    }
+                },
+            }
+        },
+        {
+            "toolSpec": {
+                "name": "search_documents",
+                "description": (
+                    "Search the user's own documents (notes, handbooks, policies) for passages "
+                    "related to a question. Use this whenever the answer might be in the user's "
+                    "documents rather than general knowledge. Base your answer on the passages "
+                    "returned, mention the source file, and say so if they don't contain the answer."
+                ),
+                "inputSchema": {
+                    "json": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "What to search for, written as a short question or phrase.",
+                            }
+                        },
+                        "required": ["query"],
                     }
                 },
             }
