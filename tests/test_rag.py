@@ -1,6 +1,7 @@
 """Tests for rag.py: chunking, similarity, and search (with a fake embedding model)."""
 import math
 import re
+import shutil
 from pathlib import Path
 
 import pytest
@@ -65,7 +66,32 @@ def test_search_finds_the_relevant_document(fixture_index):
     assert len(results) == rag.TOP_K
 
 
-def test_search_without_index_explains_what_to_do(tmp_path, monkeypatch):
-    monkeypatch.setattr(rag, "INDEX_FILE", tmp_path / "missing.json")
-    with pytest.raises(ValueError, match="python3 rag.py"):
+def test_search_with_no_documents_explains_the_problem(tmp_path, monkeypatch):
+    monkeypatch.setattr(rag, "DOCS_DIR", tmp_path / "empty")
+    with pytest.raises(ValueError, match="No documents found"):
         rag.search("anything")
+
+
+def test_index_is_reused_until_documents_change(tmp_path, monkeypatch):
+    docs = tmp_path / "docs"
+    shutil.copytree(FIXTURE_DOCS, docs)
+    monkeypatch.setattr(rag, "DOCS_DIR", docs)
+    monkeypatch.setattr(rag, "INDEX_FILE", tmp_path / "index.json")
+    calls = []
+    monkeypatch.setattr(rag, "embed", lambda text: calls.append(text) or fake_embed(text))
+
+    rag.ensure_index()
+    first_build = len(calls)
+    rag.ensure_index()
+    assert len(calls) == first_build                 # nothing changed: no re-embedding
+
+    (docs / "garden_faq.md").write_text("# FAQ\n\nNew answer about parking.", encoding="utf-8")
+    chunks = rag.ensure_index()
+    assert len(calls) > first_build                  # a document changed: rebuilt
+    assert any("parking" in chunk["text"] for chunk in chunks)
+
+
+def test_index_rebuilds_when_chunk_size_changes(tmp_path, monkeypatch, fixture_index):
+    before = rag.fingerprint()
+    monkeypatch.setattr(rag, "MAX_CHUNK_WORDS", rag.MAX_CHUNK_WORDS + 10)
+    assert rag.fingerprint() != before
