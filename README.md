@@ -11,6 +11,7 @@ A chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
 - Conversation history saved between sessions
 - Web UI built with Streamlit
 - Tool use: the bot can check the current time and do exact math
+- Model comparison script (compare_models.py)
 
 ## Setup
 1. Create and activate a virtual environment:
@@ -34,6 +35,12 @@ Commands: `clear` resets memory (and the saved history), `quit` exits and shows 
 streamlit run app.py
 ```
 Opens at http://localhost:8501. Both interfaces share the same conversation history.
+
+**Compare models:**
+```bash
+python3 compare_models.py
+```
+Sends the same questions to several Bedrock models and writes quality, speed, and cost results to `comparison_results.md`.
 
 ## Configuration
 | Setting | Default | Description |
