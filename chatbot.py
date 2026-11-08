@@ -1,22 +1,24 @@
+import os
+from pathlib import Path
+
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# setup: runs once
-bedrock_client = boto3.client('bedrock-runtime')
-MODEL_ID = 'global.amazon.nova-2-lite-v1:0'
-SYSTEM_PROMPT = """You are a friendly assistant helping a beginner learn to code.
-Keep answers short (2-4 sentences) unless the user asks for more detail.
-If you don't know something, say so instead of guessing."""
-MAX_TOKENS = 300
-TEMPERATURE = 0.7
-MAX_TURNS = 3
+# --- Settings: read from .env, with defaults if missing ---
+MODEL_ID = os.getenv("MODEL_ID", "global.amazon.nova-2-lite-v1:0")
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "300"))
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
+MAX_TURNS = int(os.getenv("MAX_TURNS", "3"))
+INPUT_PRICE_PER_M = float(os.getenv("INPUT_PRICE_PER_M", "0.30"))
+OUTPUT_PRICE_PER_M = float(os.getenv("OUTPUT_PRICE_PER_M", "2.50"))
 
-# Prices in USD per 1 million tokens — check aws.amazon.com/bedrock/pricing
-INPUT_PRICE_PER_M = 0.30
-OUTPUT_PRICE_PER_M = 2.50
+PROMPT_FILE = Path(__file__).parent / "system_prompt.txt"
+SYSTEM_PROMPT = PROMPT_FILE.read_text().strip()
+
+bedrock_client = boto3.client('bedrock-runtime')
 
 
 def calculate_cost(input_tokens, output_tokens):
@@ -37,7 +39,8 @@ total_input_tokens = 0
 total_output_tokens = 0
 total_cost = 0.0
 
-print("Chatbot ready! Type 'quit' to exit, 'clear' to forget the conversation.\n")
+print(f"Chatbot ready! Model: {MODEL_ID} | max tokens: {MAX_TOKENS} | memory: {MAX_TURNS} turns")
+print("Type 'quit' to exit, 'clear' to forget the conversation.\n")
 
 # chat loop: runs once per question
 while True:
