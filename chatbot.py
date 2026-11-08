@@ -5,15 +5,24 @@ load_dotenv()
 
 # setup: runs once
 bedrock_client = boto3.client('bedrock-runtime')
-MODEL_ID='global.amazon.nova-2-lite-v1:0'
+MODEL_ID = 'global.amazon.nova-2-lite-v1:0'
 SYSTEM_PROMPT = """You are a friendly assistant helping a beginner learn to code.
 Keep answers short (2-4 sentences) unless the user asks for more detail.
 If you don't know something, say so instead of guessing."""
 MAX_TOKENS = 300
 TEMPERATURE = 0.7
+INPUT_PRICE_PER_M = 0.30
+OUTPUT_PRICE_PER_M = 2.50
 
+def calculate_cost(input_tokens, output_tokens):
+    input_cost = input_tokens / 1_000_000 * INPUT_PRICE_PER_M
+    output_cost = output_tokens / 1_000_000 * OUTPUT_PRICE_PER_M
+    return input_cost + output_cost
 
 messages = []
+total_input_tokens = 0
+total_output_cost = 0
+total_cost = 0.0
 
 print("Chatbot ready! Type 'quit' to exit, 'clear' to forget the conversation.\n")
 
@@ -26,9 +35,12 @@ while True:
         break
 
     if question.lower() == "clear":
-        messages.clear()
-        print("Memory cleared.\n")
-        continue
+        print("\n--- Session summary ---")
+        print(f"Input tokens:  {total_input_tokens:,}")
+        print(f"Output tokens: {total_output_tokens:,}")
+        print(f"Total cost:    ${total_cost:.6f}")
+        print("Goodbye!")
+        break
     
     if not question:
         continue
@@ -54,4 +66,12 @@ while True:
     if response["stopReason"] == "max_tokens":
         print("   [reply was cut off — hit the max token limit]")
         
-    print(f"   [input tokens this turn: {response['usage']['inputTokens']}]\n")
+    usage = response["usage"]
+    turn_cost = calculate_cost(usage["inputTokens"], usage["outputTokens"])
+
+    total_input_tokens += usage["inputTokens"]
+    total_output_tokens += usage["outputTokens"]
+    total_cost += turn_cost
+
+    print(f"   [{usage['inputTokens']} in / {usage['outputTokens']} out"
+          f" | this turn: ${turn_cost:.6f} | session: ${total_cost:.6f}]\n")
