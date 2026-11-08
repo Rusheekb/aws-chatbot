@@ -1,4 +1,5 @@
 import boto3
+from botocore.exceptions import BotoCoreError, ClientError
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -40,7 +41,11 @@ print("Chatbot ready! Type 'quit' to exit, 'clear' to forget the conversation.\n
 
 # chat loop: runs once per question
 while True:
-    question = input("You: ").strip()
+    try:
+        question = input("You: ").strip()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        question = "quit"
 
     if question.lower() == "quit":
         print("\n--- Session summary ---")
@@ -54,27 +59,36 @@ while True:
         messages.clear()
         print("Memory cleared.\n")
         continue
-
     
     if not question:
         continue
 
     messages.append({"role": "user", "content": [{"text": question}]})
-    
-    response = bedrock_client.converse(
-        modelId=MODEL_ID,
-        messages=messages,
-        system=[{"text": SYSTEM_PROMPT}],
-        inferenceConfig={
-            "maxTokens": MAX_TOKENS,
-            "temperature": TEMPERATURE,
-        },
-    )
+
+    try:
+        response = bedrock_client.converse(
+            modelId=MODEL_ID,
+            messages=messages,
+            system=[{"text": SYSTEM_PROMPT}],
+            inferenceConfig={
+                "maxTokens": MAX_TOKENS,
+                "temperature": TEMPERATURE,
+            },
+        )
+    except ClientError as error:
+        code = error.response["Error"]["Code"]
+        detail = error.response["Error"]["Message"]
+        print(f"   [AWS error: {code} — {detail}]\n")
+        messages.pop()
+        continue
+    except BotoCoreError as error:
+        print(f"   [Connection problem: {error}]\n")
+        messages.pop()
+        continue
 
     assistant_message = response["output"]["message"]
     messages.append(assistant_message)
     messages = trim_history(messages)
-
 
     answer = assistant_message["content"][0]["text"]
     print(f"Bot: {answer}")
