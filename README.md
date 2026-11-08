@@ -10,6 +10,7 @@ A chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
 - Configurable via `.env` and `system_prompt.txt`
 - Conversation history saved between sessions
 - Web UI built with Streamlit
+- Tool use: the bot can check the current time and do exact math
 
 ## Setup
 1. Create and activate a virtual environment:
