@@ -6,6 +6,10 @@ load_dotenv()
 # setup: runs once
 bedrock_client = boto3.client('bedrock-runtime')
 MODEL_ID='global.amazon.nova-2-lite-v1:0'
+SYSTEM_PROMPT = """You are a friendly assistant helping a beginner learn to code.
+Keep answers short (2-4 sentences) unless the user asks for more detail.
+If you don't know something, say so instead of guessing."""
+
 
 messages = []
 
@@ -32,6 +36,7 @@ while True:
     response = bedrock_client.converse(
         modelId=MODEL_ID,
         messages=messages,
+        system=[{"text": SYSTEM_PROMPT}]
     )
 
     assistant_message = response["output"]["message"]
@@ -39,5 +44,5 @@ while True:
 
     answer = assistant_message["content"][0]["text"]
     print(f"Bot: {answer}")
-    
+
     print(f"   [input tokens this turn: {response['usage']['inputTokens']}]\n")
