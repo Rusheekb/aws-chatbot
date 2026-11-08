@@ -1,6 +1,6 @@
 # AWS Bedrock Chatbot
 
-A command-line chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
+A chatbot built with Python and Amazon Bedrock (Nova 2 Lite).
 
 ## Features
 - Streaming responses
