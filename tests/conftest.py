@@ -65,6 +65,7 @@ def no_real_aws(monkeypatch):
     """Make sure no test can reach AWS by accident."""
     monkeypatch.setattr(bot, "bedrock_client", NoNetworkClient())
     monkeypatch.setattr(rag, "client", NoNetworkClient())
+    rag.embed_query.cache_clear()       # cached embeddings must not leak between tests
 
 
 @pytest.fixture

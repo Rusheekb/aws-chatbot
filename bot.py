@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 
 import boto3
+from botocore.config import Config
 from dotenv import load_dotenv
 
 from tools import TOOL_CONFIG, run_tool
@@ -26,7 +27,10 @@ BASE_DIR = Path(__file__).parent
 SYSTEM_PROMPT = (BASE_DIR / "system_prompt.txt").read_text(encoding="utf-8").strip()
 HISTORY_FILE = BASE_DIR / "chat_history.json"
 
-bedrock_client = boto3.client("bedrock-runtime")
+# "adaptive" retries back off and slow down automatically when AWS says we're sending too fast.
+bedrock_client = boto3.client(
+    "bedrock-runtime", config=Config(retries={"max_attempts": 8, "mode": "adaptive"})
+)
 
 
 def calculate_cost(input_tokens, output_tokens):

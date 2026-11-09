@@ -90,6 +90,8 @@ def evaluate_retrieval(questions):
             "evidence_found": any(normalize(phrase) in retrieved_text for phrase in q["evidence"]),
             "found": found,
         })
+    if not rows:
+        return None                     # e.g. only off-topic questions were selected
     hits = [row for row in rows if row["rank"]]
     return {
         "hit_rate": len(hits) / len(rows),
@@ -149,41 +151,68 @@ def current_settings():
         "temperature": bot.TEMPERATURE,
         "max_chunk_words": rag.MAX_CHUNK_WORDS,
         "top_k": rag.TOP_K,
+        "chunk_headers": rag.CHUNK_HEADERS,
+        "section_chunks": rag.SECTION_CHUNKS,
+        "search_mode": rag.SEARCH_MODE,
         "system_prompt": bot.SYSTEM_PROMPT,
     }
 
 
+THINKING = re.compile(r"<thinking>.*?</thinking>", re.DOTALL)
+
+
 def evaluate_answers(questions):
-    """Run every question through the assistant and the judge."""
+    """Run every question through the assistant and the judge.
+
+    The judge grades the answer's content with any <thinking> blocks removed, and leaked
+    tags are recorded separately. A question passes only if the content is right AND
+    nothing leaked, but keeping both lets us see how good a model would be once fixed.
+    """
     rows = []
     for q in questions:
         try:
             result = ask_assistant(q["question"])
-            verdict, judge_cost = judge(q, result["answer"])
+            content = THINKING.sub("", result["answer"]).strip()
+            verdict, judge_cost = judge(q, content)
         except (ClientError, BotoCoreError) as error:
             result = {"answer": "", "error": str(error), "cost": 0.0, "seconds": 0.0,
                       "input_tokens": 0, "output_tokens": 0, "searched": False, "sources": []}
             verdict, judge_cost = {"pass": False, "reason": "Error while answering"}, 0.0
-        if "<thinking>" in result["answer"]:
-            verdict = {"pass": False, "reason": "Answer leaks <thinking> tags"}
-        rows.append({**q, **result, **verdict, "judge_cost": judge_cost})
-        print(f"  {'PASS' if verdict['pass'] else 'FAIL'}  {q['id']:<18} {verdict['reason'][:70]}")
+        leaks = "<thinking>" in result["answer"]
+        row = {**q, **result, "content_pass": verdict["pass"], "leaks_thinking": leaks,
+               "pass": verdict["pass"] and not leaks, "reason": verdict["reason"], "judge_cost": judge_cost}
+        rows.append(row)
+        note = " (leaks <thinking>)" if leaks else ""
+        print(f"  {'PASS' if row['pass'] else 'FAIL'}  {q['id']:<18} {verdict['reason'][:60]}{note}")
     return rows
 
 
 def summarize(rows):
-    """Accuracy overall and per category, plus average cost, speed and tokens."""
-    categories = sorted({row["category"] for row in rows})
+    """Accuracy overall and per category, plus average cost, speed and tokens.
+
+    Questions that hit an AWS error (e.g. throttling) are counted separately, so an
+    infrastructure problem doesn't look like a drop in answer quality.
+    """
+    answered = [row for row in rows if not row.get("error")]
+    if not answered:
+        return {"accuracy": 0.0, "content_accuracy": 0.0, "thinking_leaks": 0, "errors": len(rows),
+                "by_category": {}, "avg_cost": 0.0, "avg_seconds": 0.0, "avg_input_tokens": 0.0,
+                "search_rate": 0.0, "judge_cost": 0.0}
+    categories = sorted({row["category"] for row in answered})
     return {
-        "accuracy": sum(row["pass"] for row in rows) / len(rows),
+        "accuracy": sum(row["pass"] for row in answered) / len(answered),
+        "content_accuracy": sum(row.get("content_pass", row["pass"]) for row in answered) / len(answered),
+        "thinking_leaks": sum(row.get("leaks_thinking", False) for row in answered),
+        "errors": len(rows) - len(answered),
         "by_category": {
-            c: sum(r["pass"] for r in rows if r["category"] == c) / sum(r["category"] == c for r in rows)
+            c: sum(r["pass"] for r in answered if r["category"] == c)
+            / sum(r["category"] == c for r in answered)
             for c in categories
         },
-        "avg_cost": sum(row["cost"] for row in rows) / len(rows),
-        "avg_seconds": sum(row["seconds"] for row in rows) / len(rows),
-        "avg_input_tokens": sum(row["input_tokens"] for row in rows) / len(rows),
-        "search_rate": sum(row["searched"] for row in rows) / len(rows),
+        "avg_cost": sum(row["cost"] for row in answered) / len(answered),
+        "avg_seconds": sum(row["seconds"] for row in answered) / len(answered),
+        "avg_input_tokens": sum(row["input_tokens"] for row in answered) / len(answered),
+        "search_rate": sum(row["searched"] for row in answered) / len(answered),
         "judge_cost": sum(row["judge_cost"] for row in rows),
     }
 
@@ -198,12 +227,14 @@ def main():
     rag.ensure_index()
     questions = load_questions(args.ids)
     retrieval = evaluate_retrieval(questions)
-    print(f"Retrieval: hit rate {retrieval['hit_rate']:.0%}, MRR {retrieval['mrr']:.2f}, "
-          f"evidence recall {retrieval['evidence_recall']:.0%} "
-          f"(chunks of {rag.MAX_CHUNK_WORDS} words, top {rag.TOP_K})")
-    for miss in retrieval["misses"]:
-        problem = "wrong documents" if not miss["rank"] else "right document, answer not in chunk"
-        print(f"  MISS {miss['id']} ({problem}): got {miss['found']}")
+    if retrieval:
+        print(f"Retrieval: hit rate {retrieval['hit_rate']:.0%}, MRR {retrieval['mrr']:.2f}, "
+              f"evidence recall {retrieval['evidence_recall']:.0%} (chunks of {rag.MAX_CHUNK_WORDS} "
+              f"words, top {rag.TOP_K}, headers {rag.CHUNK_HEADERS}, sections {rag.SECTION_CHUNKS}, "
+              f"{rag.SEARCH_MODE} search)")
+        for miss in retrieval["misses"]:
+            problem = "wrong documents" if not miss["rank"] else "right document, answer not in chunk"
+            print(f"  MISS {miss['id']} ({problem}): got {miss['found']}")
     if args.retrieval_only:
         return
 
@@ -211,7 +242,13 @@ def main():
     rows = evaluate_answers(questions)
     summary = summarize(rows)
 
-    print(f"\nAccuracy: {summary['accuracy']:.0%} ({sum(r['pass'] for r in rows)}/{len(rows)})")
+    answered = len(rows) - summary["errors"]
+    print(f"\nAccuracy: {summary['accuracy']:.0%} ({sum(r['pass'] for r in rows)}/{answered})")
+    if summary["thinking_leaks"]:
+        print(f"Content accuracy ignoring leaked <thinking> tags: {summary['content_accuracy']:.0%} "
+              f"({summary['thinking_leaks']} answers leaked tags)")
+    if summary["errors"]:
+        print(f"WARNING: {summary['errors']} questions hit AWS errors and are excluded. Re-run later.")
     for category, accuracy in summary["by_category"].items():
         print(f"  {category:<15} {accuracy:.0%}")
     print(f"Avg cost per question: ${summary['avg_cost']:.5f} · avg {summary['avg_seconds']:.1f}s · "

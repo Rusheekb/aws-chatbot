@@ -4,6 +4,8 @@ For: Students, Parents · Topic: Messages and notes
 
 After each class your tutor writes what you covered and any homework.
 
+Also searched as: notes, homework, summary, history, past classes.
+
 ## On your home page (for Students)
 
 - The **Homework** card lists homework from your recent classes.

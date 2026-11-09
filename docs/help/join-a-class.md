@@ -4,6 +4,8 @@ For: Students, Parents · Topic: Classes
 
 Your class link is at the top of your home page. Press Join class when it’s time.
 
+Also searched as: zoom, google meet, meet, link, meeting, video, start, enter, call.
+
 ## From your home page (for Students)
 
 1. Sign in a few minutes before class. Your **Home** page opens with your next class at the top.

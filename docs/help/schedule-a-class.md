@@ -4,6 +4,8 @@ For: Tutors · Topic: Classes
 
 Schedule → Schedule a class. Turn on Repeat weekly for a regular time.
 
+Also searched as: book, add, create, new class, session, recurring, weekly, calendar.
+
 1. Open **Schedule** and choose **Schedule a class**.
 2. Pick the **Student** and **Subject**, and give the class a **Title**.
 3. Choose the **Date**, **Start time** and **End time** in your own time zone. If your student is in a different one, the form shows their time too.

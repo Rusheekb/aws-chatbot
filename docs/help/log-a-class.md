@@ -4,6 +4,8 @@ For: Tutors · Topic: Classes
 
 After every class, the same day: Schedule → Ready to log → Mark complete.
 
+Also searched as: complete, finish, notes, homework, hours, record, mark complete, paid.
+
 1. When a class ends, it shows under **Ready to log** on your **Schedule**.
 2. Choose **Mark complete**.
 3. Check **Hours taught**. It starts at the scheduled length; change it if the class ran longer or shorter, in half-hour steps.

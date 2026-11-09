@@ -4,6 +4,8 @@ For: Tutors · Topic: Classes
 
 Multiple-choice questions drafted from your class notes. You check every one before your student sees it.
 
+Also searched as: practice, ai, questions, quiz, worksheet, multiple choice, assign practice, due date.
+
 For math and science classes, AI drafts multiple-choice questions from your notes for a class you’ve logged. Nothing reaches your student until you’ve read every question and assigned it. It isn’t available for students under 13, without an age on file, or whose family has turned AI practice off.
 
 ## Assign practice

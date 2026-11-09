@@ -4,13 +4,13 @@ Learn2Lead has no subscription. You buy tutoring hours in packs and use them whe
 
 ## Hour packs
 
-| Pack | Total price | Price per hour | Savings |
+Tutoring costs $35, $30 or $25 per hour, depending on the pack: 4 hours for $140, 8 hours for $240, or 12 hours for $300. Hours are only sold in these three packs. There is no single-hour purchase.
+
+| Pack | Total price | Price per hour | Savings vs the 4-hour pack |
 |---|---|---|---|
 | 4 hours | $140 | $35 per hour | — |
-| 8 hours (most popular) | $240 | $30 per hour | Save 14% |
-| 12 hours | $300 | $25 per hour | Save 29% |
-
-Savings are compared with the 4-hour pack's price of $35 per hour.
+| 8 hours (most popular) | $240 | $30 per hour | Save 14% compared with the 4-hour pack's $35 per hour |
+| 12 hours | $300 | $25 per hour | Save 29% compared with the 4-hour pack's $35 per hour |
 
 Every pack includes: use at your own pace, hours that never expire, access to all subjects, and flexible scheduling. Checkout is secure, through Stripe.
 

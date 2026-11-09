@@ -4,6 +4,8 @@ For: Students, Parents · Topic: Classes
 
 Tell us what you need in about 3 minutes, and we’ll pick a tutor who fits.
 
+Also searched as: match, request, new tutor, another subject, pair.
+
 ## Asking for your child (for Parents)
 
 1. On your **Family** page, open your child.

@@ -4,6 +4,8 @@ For: Students, Parents · Topic: Hours and payments
 
 When you run out of hours, auto-refill buys the same pack again.
 
+Also searched as: auto renew, renewal, refill, card, payment method.
+
 Only the person who pays for the account can do this. If a parent pays for a student, the parent manages it.
 
 1. To open your settings, select your name at the bottom left (on a phone, your initials at the top right), then choose **Settings**.
