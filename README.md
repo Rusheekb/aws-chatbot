@@ -1,6 +1,6 @@
 # Learn2Lead Assistant
 
-[![CI](https://github.com/Rusheekb/aws-chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/Rusheekb/aws-chatbot/actions/workflows/ci.yml)
+[![CI](https://github.com/Rusheekb/learn2lead-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/Rusheekb/aws-chatbot/actions/workflows/ci.yml)
 
 An AI assistant for [Learn2Lead](https://learn2lead.page), a live one-on-one online tutoring platform. It tells new visitors what Learn2Lead offers and helps students, parents and tutors use the site, answering from the site's own content with Amazon Bedrock.
 
