@@ -2,6 +2,7 @@
 import math
 import re
 import shutil
+import zlib
 from pathlib import Path
 
 import pytest
@@ -11,14 +12,15 @@ import rag
 FIXTURE_DOCS = Path(__file__).parent / "fixtures" / "docs"
 
 
-def fake_embed(text, dimensions=64):
+def fake_embed(text, dimensions=1024):
     """A stand-in for Titan: hash each word into a vector, then normalize.
 
     Texts that share words get similar vectors, which is enough to test search.
+    Uses crc32, not Python's hash(): hash() changes between runs, which made this test flaky.
     """
     vector = [0.0] * dimensions
     for word in re.findall(r"[a-z0-9]+", text.lower()):
-        vector[hash(word) % dimensions] += 1.0
+        vector[zlib.crc32(word.encode()) % dimensions] += 1.0
     length = math.sqrt(sum(x * x for x in vector)) or 1.0
     return [x / length for x in vector]
 
