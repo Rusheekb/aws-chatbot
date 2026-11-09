@@ -1,4 +1,4 @@
-"""Terminal interface for the Bedrock chatbot."""
+"""Terminal interface for the Learn2Lead assistant (handy for development)."""
 from botocore.exceptions import BotoCoreError, ClientError
 
 from bot import (
@@ -18,7 +18,7 @@ def main():
     total_output_tokens = 0
     total_cost = 0.0
 
-    print(f"Chatbot ready! Model: {MODEL_ID} | max tokens: {MAX_TOKENS} | memory: {MAX_TURNS} turns")
+    print(f"Learn2Lead assistant ready! Model: {MODEL_ID} | max tokens: {MAX_TOKENS} | memory: {MAX_TURNS} turns")
     print("Type 'quit' to exit, 'clear' to forget the conversation.\n")
     messages = trim_history(load_history())
 
@@ -75,8 +75,8 @@ def main():
         messages = trim_history(messages)
         save_history(messages)
 
-        if turn.tools_used:
-            print(f"   [tools used: {', '.join(turn.tools_used)}]")
+        if turn.sources:
+            print(f"   [sources: {', '.join(turn.sources)}]")
 
         if turn.stop_reason == "max_tokens":
             print("   [reply was cut off — hit the max token limit]")
