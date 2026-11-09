@@ -63,7 +63,7 @@ def test_search_finds_the_relevant_document(fixture_index):
     results = rag.search("can I bring my dog")
     assert results[0]["source"] == "garden_faq.md"
     assert "Dogs are allowed" in results[0]["text"]
-    assert len(results) == rag.TOP_K
+    assert len(results) == min(rag.TOP_K, len(fixture_index))
 
 
 def test_search_with_no_documents_explains_the_problem(tmp_path, monkeypatch):
@@ -95,3 +95,46 @@ def test_index_rebuilds_when_chunk_size_changes(tmp_path, monkeypatch, fixture_i
     before = rag.fingerprint()
     monkeypatch.setattr(rag, "MAX_CHUNK_WORDS", rag.MAX_CHUNK_WORDS + 10)
     assert rag.fingerprint() != before
+
+
+def test_chunk_headers_name_the_document_and_section(monkeypatch):
+    monkeypatch.setattr(rag, "CHUNK_HEADERS", True)
+    monkeypatch.setattr(rag, "MAX_CHUNK_WORDS", 6)
+    text = "# Apply to tutor\n\nA short application.\n\n## Then\n\nWe email you to book an interview."
+
+    chunks = rag.split_into_chunks(text)
+
+    assert chunks[0].startswith("# Apply to tutor")          # the title chunk needs no header
+    assert chunks[-1].startswith("[Apply to tutor › Then]")
+
+
+def test_bm25_prefers_rare_matching_words():
+    texts = ["the tutor helps the student", "apply to become a tutor", "the student joins class"]
+    scores = rag.bm25_scores("become a tutor", texts)
+    assert scores.index(max(scores)) == 1
+    assert scores[2] == 0.0                                    # no matching words
+
+
+def test_reciprocal_rank_fusion_rewards_agreement():
+    semantic = [0, 1, 2]
+    keyword = [1, 2, 0]
+    assert rag.reciprocal_rank_fusion(semantic, keyword)[0] == 1   # ranked high by both
+
+
+def test_hybrid_search_returns_top_k(fixture_index, monkeypatch):
+    monkeypatch.setattr(rag, "SEARCH_MODE", "hybrid")
+    results = rag.search("dogs on a leash")
+    assert results[0]["source"] == "garden_faq.md"
+    assert len(results) == min(rag.TOP_K, len(fixture_index))
+
+
+def test_repeated_queries_are_embedded_once(monkeypatch):
+    calls = []
+    monkeypatch.setattr(rag, "embed", lambda text: calls.append(text) or fake_embed(text))
+    rag.embed_query.cache_clear()
+
+    rag.embed_query("how much does it cost?")
+    rag.embed_query("how much does it cost?")
+
+    assert calls == ["how much does it cost?"]
+    rag.embed_query.cache_clear()

@@ -14,6 +14,7 @@ def test_article_to_markdown():
     article = {
         "id": "buy-hours", "title": "Buy hours", "topic": "hours", "kind": "guide",
         "summary": "Hours never expire.", "for": ["student", "parent"], "payerOnly": True,
+        "keywords": ["price", "pack"],
         "blocks": [
             {"steps": ["Go to [[Pricing]].", "Pick a pack."]},
             {"heading": "For families", "for": ["parent"], "text": "One shared balance."},
@@ -24,6 +25,7 @@ def test_article_to_markdown():
     markdown = article_to_markdown(article, AUDIENCES, TOPICS)
 
     assert markdown.startswith("# Buy hours\n\nFor: Students, Parents · Topic: Hours and payments")
+    assert "Also searched as: price, pack." in markdown
     assert "Only the person who pays" in markdown
     assert "1. Go to **Pricing**.\n2. Pick a pack." in markdown
     assert "## For families (for Parents)\n\nOne shared balance." in markdown

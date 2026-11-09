@@ -4,6 +4,8 @@ For: Students, Parents · Topic: Messages and notes
 
 Open Messages. There’s one conversation for each student and tutor.
 
+Also searched as: chat, contact, text, talk, email tutor, conversation.
+
 1. Open **Messages** and choose the conversation with your tutor.
 2. Write your message and send it. Your tutor is told there’s a new message.
 

@@ -66,6 +66,9 @@ def article_to_markdown(article, audiences, topics):
         "",
         clean(article["summary"]),
     ]
+    if article.get("keywords"):
+        # The Help Center's own search terms, e.g. "become a tutor" for Apply to tutor.
+        lines += ["", f"Also searched as: {', '.join(article['keywords'])}."]
     if article.get("payerOnly"):
         lines += ["", PAYER_ONLY_NOTE]
 

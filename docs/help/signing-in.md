@@ -4,6 +4,8 @@ For: Students, Parents, Tutors · Topic: Your account
 
 Use your email or username and your password.
 
+Also searched as: login, log in, password, forgot, reset, username, account, locked.
+
 1. Go to learn2lead.page and choose **Sign in**.
 2. Enter your **Email or username** and your **Password**.
 

@@ -1,0 +1,833 @@
+{
+  "label": "final-run1",
+  "settings": {
+    "model_id": "global.amazon.nova-2-lite-v1:0",
+    "max_tokens": 300,
+    "temperature": 0.7,
+    "max_chunk_words": 100,
+    "top_k": 5,
+    "chunk_headers": false,
+    "section_chunks": false,
+    "search_mode": "hybrid",
+    "system_prompt": "You are the Learn2Lead assistant on the website of Learn2Lead, a live one-on-one online tutoring service.\nYou help visitors learn what Learn2Lead is and offers, and help students, parents and tutors use the site.\nFor any question about Learn2Lead, search the documents first and answer only from what they say. Never guess prices, policies or steps. If the documents don't cover it, say so and suggest emailing learn2leadtutoring@gmail.com.\nYou can't see anyone's account, classes, hours or payments. For account-specific questions, explain where to find the answer on the site.\nNever ask for passwords or payment details.\nIf a question isn't about Learn2Lead, politely say you can only help with Learn2Lead, and don't answer it, even partly. That includes schoolwork: never solve problems, show steps or write essays, because that is what Learn2Lead's tutors are for. Instead, mention that a Learn2Lead tutor can help.\nIf a question could mean two things, answer the most likely meaning first.\nKeep answers short and friendly: 2-4 sentences, or a few numbered steps."
+  },
+  "retrieval": {
+    "hit_rate": 1.0,
+    "mrr": 0.8425925925925926,
+    "evidence_recall": 0.9629629629629629,
+    "misses": [
+      {
+        "id": "v-matching",
+        "rank": 3,
+        "evidence_found": false,
+        "found": [
+          "site/about.md",
+          "help/tutor-new-student.md",
+          "site/faq.md",
+          "help/find-a-tutor.md",
+          "help/apply-to-tutor.md"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "accuracy": 0.96875,
+    "by_category": {
+      "account-safety": 1.0,
+      "off-topic": 1.0,
+      "student-parent": 0.9,
+      "tutor": 1.0,
+      "unanswerable": 1.0,
+      "visitor": 1.0
+    },
+    "avg_cost": 0.001271721875,
+    "avg_seconds": 3.8815625,
+    "avg_input_tokens": 3241.9375,
+    "search_rate": 0.875,
+    "judge_cost": 0.008641600000000001
+  },
+  "rows": [
+    {
+      "id": "v-what-is",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "What is Learn2Lead?",
+      "expected": "A live one-on-one online tutoring service for K-12 students and test prep, where each student gets a dedicated tutor.",
+      "sources": [
+        "site/about.md",
+        "site/how-it-works.md",
+        "site/faq.md",
+        "site/pricing.md"
+      ],
+      "evidence": [
+        "live one-on-one tutoring"
+      ],
+      "answer": "Learn2Lead is a live one-on-one tutoring service for K\u201312 students and test prep. It offers personal tutoring to help students build skills, confidence, and leadership. Each student is paired with a dedicated tutor for live online classes. Families can purchase hours in packs (4, 8, or 12 hours) and use them as needed, with all classes, notes, and assignments stored in one place. The service covers a wide range of subjects, including Math, Science, English, History, and test preparation for exams like the SAT, ACT, and AP.",
+      "searched": true,
+      "input_tokens": 3165,
+      "output_tokens": 144,
+      "cost": 0.0013095,
+      "seconds": 2.62,
+      "pass": true,
+      "reason": "The answer agrees with the reference and includes additional correct details.",
+      "judge_cost": 0.00026960000000000005
+    },
+    {
+      "id": "v-chemistry",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Do you tutor chemistry?",
+      "expected": "Yes. Science tutoring includes chemistry (as well as biology and physics).",
+      "sources": [
+        "site/faq.md",
+        "site/subjects.md",
+        "help/find-a-tutor.md",
+        "help/apply-to-tutor.md"
+      ],
+      "evidence": [
+        "chemistry"
+      ],
+      "answer": "Yes, Learn2Lead tutors chemistry! They offer tutoring for K-12 science subjects, including biology, chemistry, and physics. You can request a chemistry tutor through your account by selecting \"Find a tutor\" or \"Tutor for another subject\" if you already have a tutor for a different subject.",
+      "searched": true,
+      "input_tokens": 3243,
+      "output_tokens": 89,
+      "cost": 0.0011953999999999999,
+      "seconds": 2.34,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes additional correct details.",
+      "judge_cost": 0.0002208
+    },
+    {
+      "id": "v-lsat",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Can I get help preparing for the LSAT?",
+      "expected": "Yes, Learn2Lead offers LSAT test prep.",
+      "sources": [
+        "site/subjects.md",
+        "site/faq.md",
+        "site/about.md",
+        "help/assign-practice.md"
+      ],
+      "evidence": [
+        "lsat"
+      ],
+      "answer": "Yes, Learn2Lead offers tutoring for the LSAT. They provide one-on-one online sessions with dedicated tutors who focus on your specific learning needs. You can get help with LSAT preparation just like with other subjects and tests they offer. To start, you can tell Learn2Lead what you need through their contact form or by email, and they'll find the right tutor for you.",
+      "searched": true,
+      "input_tokens": 3210,
+      "output_tokens": 106,
+      "cost": 0.001228,
+      "seconds": 1.99,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes additional correct details about the service.",
+      "judge_cost": 0.00024400000000000002
+    },
+    {
+      "id": "v-prices",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "How much does tutoring cost?",
+      "expected": "Hours are sold in packs: 4 hours for $140 ($35/hour), 8 hours for $240 ($30/hour), 12 hours for $300 ($25/hour). No subscription.",
+      "sources": [
+        "site/pricing.md",
+        "site/faq.md",
+        "site/about.md",
+        "help/apply-to-tutor.md"
+      ],
+      "evidence": [
+        "$140"
+      ],
+      "answer": "Tutoring with Learn2Lead is priced per hour, with three different packs available:\n\n- **4 hours** for **$140** ($35 per hour)\n- **8 hours** for **$240** ($30 per hour)\n- **12 hours** for **$300** ($25 per hour)\n\nYou can choose the pack that best fits your needs, and these hours never expire. Each session uses time in half-hour increments, so a 30-minute session costs 0.5 hours, a 1-hour session costs 1 hour, and so on.\n\nYou can purchase additional hours anytime by buying another pack on the Pricing page. There is no subscription fee to cancel.",
+      "searched": true,
+      "input_tokens": 3185,
+      "output_tokens": 168,
+      "cost": 0.0013755,
+      "seconds": 2.17,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.0003232
+    },
+    {
+      "id": "v-12-pack",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "How much is the 12 hour pack and how much do I save?",
+      "expected": "$300, which is $25 per hour, saving 29% compared with the 4-hour pack's $35 per hour. Learn2Lead does not sell single hours.",
+      "sources": [
+        "site/pricing.md",
+        "help/buy-hours.md",
+        "site/faq.md"
+      ],
+      "evidence": [
+        "$300"
+      ],
+      "answer": "The 12-hour pack costs **$300** total, which is **$25 per hour**. Compared to the 4-hour pack, you save **29%**\u2014that's $110 saved versus buying four 4-hour packs ($140 x 4 = $560).",
+      "searched": true,
+      "input_tokens": 3169,
+      "output_tokens": 87,
+      "cost": 0.0011681999999999999,
+      "seconds": 2.0,
+      "pass": true,
+      "reason": "The answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00025120000000000003
+    },
+    {
+      "id": "v-expire",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Do my hours expire if I don't use them?",
+      "expected": "No. Hours never expire and carry over indefinitely.",
+      "sources": [
+        "site/pricing.md",
+        "site/faq.md",
+        "help/out-of-hours.md",
+        "help/buy-hours.md",
+        "help/log-a-class.md"
+      ],
+      "evidence": [
+        "never expire",
+        "no expiration date",
+        "carry over indefinitely"
+      ],
+      "answer": "Great news! **Your hours never expire.** Once you purchase them, they're yours to use whenever you like\u2014there's no deadline or subscription to worry about. You can buy more hours anytime if you need to top up.",
+      "searched": true,
+      "input_tokens": 3086,
+      "output_tokens": 78,
+      "cost": 0.0011208000000000001,
+      "seconds": 2.29,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes key facts with additional correct detail.",
+      "judge_cost": 0.0002232
+    },
+    {
+      "id": "v-subscription",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Is this a monthly subscription?",
+      "expected": "No subscription. You buy hour packs once, optionally with auto-refill that rebuys the same pack when hours run out.",
+      "sources": [
+        "site/faq.md",
+        "site/pricing.md",
+        "help/tutor-interview.md",
+        "help/message-your-tutor.md"
+      ],
+      "evidence": [
+        "no subscription"
+      ],
+      "answer": "Learn2Lead is not a monthly subscription. You buy tutoring hours in packs (4, 8 or 12 hours) and use them whenever you like. There is no expiration date on the hours, and you can buy more packs anytime. You can also set up auto-refill to purchase the same pack again when you run out of hours, but you can turn this off anytime in your settings.",
+      "searched": true,
+      "input_tokens": 3127,
+      "output_tokens": 111,
+      "cost": 0.0012156,
+      "seconds": 2.54,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts with additional correct details.",
+      "judge_cost": 0.0002616
+    },
+    {
+      "id": "v-online",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Are classes in person or online?",
+      "expected": "All classes are online, live one-on-one video sessions.",
+      "sources": [
+        "site/how-it-works.md",
+        "site/about.md",
+        "help/calendar-sync.md",
+        "help/join-a-class.md"
+      ],
+      "evidence": [
+        "all sessions are"
+      ],
+      "answer": "All Learn2Lead classes are **online video classes**. Students can join from any phone or laptop, and each session is one-on-one with a dedicated tutor. You simply tap to join each class, and your tutor will book sessions at times that fit your schedule.",
+      "searched": true,
+      "input_tokens": 3157,
+      "output_tokens": 84,
+      "cost": 0.0011570999999999999,
+      "seconds": 2.19,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes key facts.",
+      "judge_cost": 0.0002144
+    },
+    {
+      "id": "v-matching",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "How do you decide which tutor I get?",
+      "expected": "Learn2Lead pairs each student with a tutor based on subject, goals, learning style and schedule, and emails you once you're matched.",
+      "sources": [
+        "site/about.md",
+        "help/tutor-new-student.md",
+        "site/faq.md",
+        "help/find-a-tutor.md",
+        "help/apply-to-tutor.md"
+      ],
+      "evidence": [
+        "learning style",
+        "we pick a tutor who fits"
+      ],
+      "answer": "Learn2Lead matches you with a tutor based on what you tell them you need. When you or your parent asks for a tutor, you\u2019ll share details like the subject, your current level, and any goals. Learn2Lead then picks a tutor who\u2019s a good fit and contacts both of you to confirm before pairing you up. If you already have a tutor but want another subject, you can also ask for a different tutor.",
+      "searched": true,
+      "input_tokens": 3223,
+      "output_tokens": 118,
+      "cost": 0.0012619,
+      "seconds": 2.7,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes additional correct details.",
+      "judge_cost": 0.00025760000000000003
+    },
+    {
+      "id": "v-schools",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "Do you work with schools?",
+      "expected": "Yes, Learn2Lead offers customized plans for schools and organizations; get in touch through the contact form or email.",
+      "sources": [
+        "site/pricing.md",
+        "site/about.md",
+        "site/faq.md",
+        "help/invite-a-parent.md",
+        "help/teaching-profile.md"
+      ],
+      "evidence": [
+        "schools and organizations"
+      ],
+      "answer": "Yes, Learn2Lead works with schools and organizations. They offer customized tutoring plans designed for schools. To learn more or to set up a plan for your school, you can get in touch using the contact form on the Learn2Lead website or by emailing them at **learn2leadtutoring@gmail.com**.",
+      "searched": true,
+      "input_tokens": 3132,
+      "output_tokens": 91,
+      "cost": 0.0011671,
+      "seconds": 2.1,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes key facts with additional correct detail.",
+      "judge_cost": 0.0002424
+    },
+    {
+      "id": "v-contact",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "How can I talk to someone at Learn2Lead?",
+      "expected": "Email learn2leadtutoring@gmail.com, call (925) 854-7020, or use the contact form on the home page.",
+      "sources": [
+        "site/contact.md",
+        "site/faq.md",
+        "site/pricing.md",
+        "site/how-it-works.md",
+        "site/about.md"
+      ],
+      "evidence": [
+        "(925) 854-7020"
+      ],
+      "answer": "You can talk to someone at Learn2Lead by:\n\n- **Emailing** learn2leadtutoring@gmail.com\n- **Calling** (925) 854-7020\n- **Using the contact form** at the bottom of the Learn2Lead home page. They\u2019ll reply by email.\n\nThe Help Center also has step-by-step guides for students, parents, and tutors.",
+      "searched": true,
+      "input_tokens": 3126,
+      "output_tokens": 114,
+      "cost": 0.0012228,
+      "seconds": 2.0,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts with additional correct detail.",
+      "judge_cost": 0.00028
+    },
+    {
+      "id": "v-progress",
+      "category": "visitor",
+      "behavior": "answer",
+      "question": "How will I know how my child is doing?",
+      "expected": "Parents have a dashboard with upcoming and past classes and homework, and the tutor writes notes after each class on what was covered and what to practice.",
+      "sources": [
+        "site/faq.md",
+        "help/add-a-child.md",
+        "help/join-a-class.md",
+        "help/signing-in.md",
+        "help/schedule-a-class.md"
+      ],
+      "evidence": [
+        "dashboard with upcoming classes"
+      ],
+      "answer": "You and your child each have a dashboard where you can see upcoming and past classes and homework. After each session, the tutor writes notes on what was covered and what to practice next, so you'll always know how your child is doing and what to focus on.",
+      "searched": true,
+      "input_tokens": 3101,
+      "output_tokens": 86,
+      "cost": 0.0011453000000000001,
+      "seconds": 2.1,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes its key facts with additional clarity.",
+      "judge_cost": 0.00024000000000000003
+    },
+    {
+      "id": "u-join-parent",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "I'm a parent. How do I get my kid into their class?",
+      "expected": "Sign in a few minutes early; the Family page shows the child's next class at the top; press Join class on the device the child uses, which opens the meeting in a new tab.",
+      "sources": [
+        "help/add-a-child.md",
+        "help/tutor-new-student.md",
+        "help/invite-a-parent.md",
+        "help/signing-in.md",
+        "help/class-not-starting.md"
+      ],
+      "evidence": [
+        "page shows your children"
+      ],
+      "answer": "Based on the Learn2Lead help documents, here's how to get your child into a class:\n\n1. **Add your child to your account** - On your Family page, choose \"Add a student\". Enter their name and grade (email is optional).\n\n2. **Set up tutoring** - After adding them, open their page and choose \"Find a tutor\" to tell Learn2Lead what subjects and help your child needs.\n\nThe system will match your child with a tutor based on their needs, and you'll be notified when a match is made. Once matched, you can view and schedule classes through your account.\n\nThe documents mention that children don't need their own email to join - you manage everything from your parent account. If you need more specific help, you can email Learn2Lead at learn2leadtutoring@gmail.com.",
+      "searched": true,
+      "input_tokens": 3250,
+      "output_tokens": 199,
+      "cost": 0.0014724999999999999,
+      "seconds": 2.86,
+      "pass": false,
+      "reason": "The assistant's answer provides additional steps for adding and setting up a child's tutoring, which are not part of the reference answer focused on joining a class.",
+      "judge_cost": 0.00039840000000000003
+    },
+    {
+      "id": "u-reschedule",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "I need to cancel tomorrow's class. What do I do?",
+      "expected": "Message the tutor in Messages as early as possible (they move or cancel it on the schedule), or email learn2leadtutoring@gmail.com.",
+      "sources": [
+        "help/schedule-a-class.md",
+        "help/reschedule-or-cancel.md",
+        "site/faq.md",
+        "help/join-a-class.md"
+      ],
+      "evidence": [
+        "move or cancel the class"
+      ],
+      "answer": "To cancel tomorrow's class on Learn2Lead, follow these steps:\n\n1. **Message your tutor first**: Send a note in the Messages section as early as possible to let them know you need to cancel. This helps them update the schedule and manage their time.\n\n2. **Cancel the class**:\n   - Go to your **Schedule** page.\n   - Find tomorrow's class and click **Edit class** or **Delete class**.\n\n3. **If you can't edit it yourself**: You can also email **learn2leadtutoring@gmail.com** to request the cancellation.\n\nAlways give your tutor as much notice as possible!",
+      "searched": true,
+      "input_tokens": 3026,
+      "output_tokens": 152,
+      "cost": 0.0012878,
+      "seconds": 2.48,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts with additional helpful details.",
+      "judge_cost": 0.00031360000000000003
+    },
+    {
+      "id": "u-tutor-missing",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "My tutor hasn't shown up to class yet. What should I do?",
+      "expected": "Check you joined the right class and wait a few minutes; if the tutor still isn't there, message them in Messages or email learn2leadtutoring@gmail.com.",
+      "sources": [
+        "help/class-not-starting.md",
+        "help/log-a-class.md",
+        "help/out-of-hours.md",
+        "help/join-a-class.md",
+        "help/tutor-no-show.md"
+      ],
+      "evidence": [
+        "give it a few minutes"
+      ],
+      "answer": "If your tutor hasn't shown up to class yet, here's what you should do:\n\n1. **Wait a few minutes** - sometimes tutors are just a little late.\n2. **Check if you joined the right class** - make sure you're in the correct session.\n3. **Send your tutor a message** - use the Messages feature to let them know you're waiting.\n4. **If they don't arrive**, email learn2leadtutoring@gmail.com to report the issue.\n\nThe help article suggests giving it a few minutes first, then sending your tutor a message through the platform. If they're still not there, contacting Learn2Lead directly is the best next step.",
+      "searched": true,
+      "input_tokens": 3095,
+      "output_tokens": 166,
+      "cost": 0.0013435,
+      "seconds": 2.51,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.0003176
+    },
+    {
+      "id": "u-out-of-hours",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "What happens when we run out of hours?",
+      "expected": "The tutor can't schedule or log classes until hours are added; buy a pack on Pricing or turn on auto-refill. Learn2Lead emails a low-balance alert.",
+      "sources": [
+        "help/out-of-hours.md",
+        "help/auto-refill.md",
+        "help/buy-hours.md",
+        "help/log-a-class.md"
+      ],
+      "evidence": [
+        "schedule or log classes until you add hours",
+        "scheduled or logged until you add hours"
+      ],
+      "answer": "When your Learn2Lead account runs out of hours, you can\u2019t schedule or log any more classes until you add more. Only the person who pays for the account can add hours. You have two options:\n\n1. **Buy hours manually**: Go to the **Pricing** page and choose a pack to purchase.\n2. **Turn on auto-refill**: This automatically buys the same pack again whenever you run out.\n\nYou\u2019ll get emails when your balance is low, unless you\u2019ve turned off low-balance alerts. Hours never expire, and there\u2019s no subscription to cancel.",
+      "searched": true,
+      "input_tokens": 3060,
+      "output_tokens": 148,
+      "cost": 0.0012879999999999999,
+      "seconds": 2.5,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.0002904
+    },
+    {
+      "id": "u-auto-refill-off",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "How do I turn off auto-refill?",
+      "expected": "Open Settings (select your name at the bottom left, or initials at top right on a phone), find Auto-refill under Hours & auto-refill, and turn the switch off.",
+      "sources": [
+        "help/auto-refill.md",
+        "site/pricing.md",
+        "help/out-of-hours.md",
+        "help/notifications.md"
+      ],
+      "evidence": [
+        "hours & auto-refill"
+      ],
+      "answer": "To turn off auto-refill on Learn2Lead:\n\n1. Click your name at the bottom left (or your initials at the top right on mobile) and choose **Settings**.\n2. Go to **Hours & auto-refill**.\n3. Find **Auto-refill** and turn the switch off.\n\nOnly the account holder who pays for the subscription can manage auto-refill. If a parent pays for a student, the parent should make this change.",
+      "searched": true,
+      "input_tokens": 3064,
+      "output_tokens": 122,
+      "cost": 0.0012242,
+      "seconds": 5.61,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.000276
+    },
+    {
+      "id": "u-add-child",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "Does my son need his own email to have an account?",
+      "expected": "No. On the Family page choose Add a student; an email is optional, and without one class emails go to the parent. Learn2Lead creates a username and temporary password.",
+      "sources": [
+        "help/add-a-child.md",
+        "help/signing-in.md",
+        "site/faq.md",
+        "help/notifications.md"
+      ],
+      "evidence": [
+        "an email is optional"
+      ],
+      "answer": "No, your son doesn't need his own email to have an account at Learn2Lead.\n\nAccording to the help page, when you add a student (child) to your family account:\n\n1. You can enter just their name and grade - an email is optional\n2. Without an email, any class emails will come to you (the parent)\n3. Learn2Lead will create a username and temporary password for your child\n4. Your child will choose their own password the first time they sign in\n\nSo you can easily add your son to your account without needing him to have his own email address.",
+      "searched": true,
+      "input_tokens": 3194,
+      "output_tokens": 159,
+      "cost": 0.0013556999999999998,
+      "seconds": 6.33,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00029360000000000003
+    },
+    {
+      "id": "u-child-password",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "My daughter forgot her password. How do I reset it?",
+      "expected": "On the Family page, open the child and choose Reset password under Sign-in.",
+      "sources": [
+        "help/add-a-child.md",
+        "help/signing-in.md",
+        "help/auto-refill.md"
+      ],
+      "evidence": [
+        "reset password"
+      ],
+      "answer": "If your daughter is a child account, you can reset her password as the parent:\n\n1. Go to your **Family** page on learn2lead.page.\n2. Open her account.\n3. Under **Sign-in**, choose **Reset password**.\n\nShe'll then get a link to set a new password. If she's not a child account, she can choose **Forgot password?** on the sign-in page to get a reset link emailed to her.",
+      "searched": true,
+      "input_tokens": 3131,
+      "output_tokens": 119,
+      "cost": 0.0012368000000000001,
+      "seconds": 5.31,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.0002592
+    },
+    {
+      "id": "u-calendar",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "Can my classes show up in Google Calendar?",
+      "expected": "Yes. In Settings, under Calendar sync, choose Add to Google Calendar; new and changed classes appear automatically (can take a few hours).",
+      "sources": [
+        "help/calendar-sync.md",
+        "help/join-a-class.md",
+        "help/schedule-a-class.md",
+        "help/tutor-zoom-link.md"
+      ],
+      "evidence": [
+        "add to google calendar"
+      ],
+      "answer": "Yes, you can add your Learn2Lead classes to Google Calendar! Here\u2019s how:\n\n1. Click your name at the bottom left (or your initials at the top right on mobile) and select **Settings**.\n2. Under **Calendar sync**, choose **Add to Google Calendar**.\n3. Your classes will appear in Google Calendar automatically. It may take a few hours for all classes to show up.\n\nIf you\u2019re a tutor, you can also use the **Calendar sync** button on your Schedule page to add classes.",
+      "searched": true,
+      "input_tokens": 1222,
+      "output_tokens": 30,
+      "cost": 0.0004416,
+      "seconds": 4.71,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00027519999999999997
+    },
+    {
+      "id": "u-half-hour",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "If a class only lasts 30 minutes, do I still lose a full hour?",
+      "expected": "No. Hours are deducted in half-hour steps, so a 30-minute class uses 0.5 hours.",
+      "sources": [
+        "help/out-of-hours.md",
+        "site/pricing.md",
+        "help/class-not-starting.md",
+        "help/time-zone.md",
+        "help/reschedule-or-cancel.md"
+      ],
+      "evidence": [
+        "uses 0.5 hours",
+        "in half-hour steps"
+      ],
+      "answer": "According to Learn2Lead's pricing page, each session uses exactly as many hours as it lasts, deducted in half-hour steps. So a 30-minute session uses 0.5 hours, not a full hour. You only lose the time that was actually used in the class.",
+      "searched": true,
+      "input_tokens": 3147,
+      "output_tokens": 98,
+      "cost": 0.0011891,
+      "seconds": 5.05,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes the key fact about half-hour steps.",
+      "judge_cost": 0.00025760000000000003
+    },
+    {
+      "id": "u-homework-notes",
+      "category": "student-parent",
+      "behavior": "answer",
+      "question": "Where can my child find their homework?",
+      "expected": "Students see a Homework card on their home page and notes in Class history; parents see Class history on the child's page in Family; a Class Completed email also includes notes and homework.",
+      "sources": [
+        "help/class-notes-and-homework.md",
+        "help/join-a-class.md",
+        "help/add-a-child.md",
+        "help/find-a-tutor.md",
+        "site/how-it-works.md"
+      ],
+      "evidence": [
+        "card lists homework"
+      ],
+      "answer": "Your child can find their homework in two places:\n\n**For students:**\n1. On their home page, look at the **Homework** card \u2013 it lists homework from recent classes.\n2. In **Class history**, they can see every class with the tutor's notes and homework.\n\n**For parents:**\n1. On your **Family** page, open your child's page.\n2. Check **Class history** to see each class with the tutor's notes and homework.\n\nAfter each class, your tutor writes notes and homework, which appear in these places.",
+      "searched": true,
+      "input_tokens": 3225,
+      "output_tokens": 142,
+      "cost": 0.0013224999999999999,
+      "seconds": 5.44,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.0002864
+    },
+    {
+      "id": "t-paid",
+      "category": "tutor",
+      "behavior": "answer",
+      "question": "As a tutor, how often do I get paid?",
+      "expected": "Every two weeks, for the classes logged since the last payment. Payroll on the Schedule shows payments.",
+      "sources": [
+        "help/tutor-pay.md",
+        "site/pricing.md",
+        "help/apply-to-tutor.md",
+        "help/tutor-new-student.md",
+        "site/about.md"
+      ],
+      "evidence": [
+        "every two weeks"
+      ],
+      "answer": "As a tutor, you are paid **every two weeks** for the classes you have logged since the last payment. Make sure to log each class on the same day it occurs so it\u2019s included in the next payment.\n\nYou can view your payment schedule, total earnings, and the specific classes paid under **Payroll** on your **Schedule** page.",
+      "searched": true,
+      "input_tokens": 3178,
+      "output_tokens": 106,
+      "cost": 0.0012184,
+      "seconds": 5.2,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00023840000000000002
+    },
+    {
+      "id": "t-zoom",
+      "category": "tutor",
+      "behavior": "answer",
+      "question": "Where do I put my Zoom link?",
+      "expected": "In Settings under Default meeting link: paste the Zoom or Google Meet link and Save. It fills in on classes scheduled from then on; existing classes keep their link (change with Edit class).",
+      "sources": [
+        "help/tutor-zoom-link.md",
+        "help/join-a-class.md",
+        "help/schedule-a-class.md",
+        "help/tutor-interview.md"
+      ],
+      "evidence": [
+        "default meeting link"
+      ],
+      "answer": "As a tutor, you put your Zoom link in your settings:\n\n1. Click your name at the bottom left (or your initials at the top right on mobile)\n2. Choose **Settings**\n3. Under **Default meeting link**, paste your Zoom link and click **Save**\n\nThis link will automatically fill in for every class you schedule. If you need to change a link for an already scheduled class, go to **Edit class** for that specific class.\n\nIf you're a student or parent, your tutor's Zoom link will appear at the top of your home page when it's time for class, or in the class details.",
+      "searched": true,
+      "input_tokens": 3238,
+      "output_tokens": 155,
+      "cost": 0.0013589,
+      "seconds": 5.83,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts with additional helpful details.",
+      "judge_cost": 0.00031039999999999996
+    },
+    {
+      "id": "t-no-show",
+      "category": "tutor",
+      "behavior": "answer",
+      "question": "My student didn't show up. Should I log the class?",
+      "expected": "Not yet. Message the family and tell Learn2Lead at learn2leadtutoring@gmail.com before logging anything; it's handled case by case.",
+      "sources": [
+        "help/log-a-class.md",
+        "help/tutor-no-show.md",
+        "help/class-not-starting.md"
+      ],
+      "evidence": [
+        "case by case"
+      ],
+      "answer": "If your student didn\u2019t show up, here\u2019s what to do:\n\n1. **Message the family** in the Messages section to let them know.\n2. **Tell the Learn2Lead team** at learn2leadtutoring@gmail.com before logging anything. \n\nThe team handles these cases individually and will decide together what happens with the hour. Only log the class after they\u2019ve guided you.",
+      "searched": true,
+      "input_tokens": 3141,
+      "output_tokens": 116,
+      "cost": 0.0012323,
+      "seconds": 5.29,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00026240000000000004
+    },
+    {
+      "id": "t-apply",
+      "category": "tutor",
+      "behavior": "answer",
+      "question": "How do I become a tutor with Learn2Lead?",
+      "expected": "Sign up and open Apply to tutor: a short application of about 5 minutes (six steps, saves as you go). Then Learn2Lead emails to set up a 30-minute interview.",
+      "sources": [
+        "site/how-it-works.md",
+        "site/faq.md",
+        "site/about.md",
+        "help/apply-to-tutor.md"
+      ],
+      "evidence": [
+        "six short steps"
+      ],
+      "answer": "To become a tutor with Learn2Lead, follow these steps:\n\n1. **Sign up** on the Learn2Lead website.\n2. **Open \"Apply to tutor\"** from your dashboard.\n3. **Complete the six short steps** in the application. Your answers save automatically, so you can finish later if needed.\n4. **Agree to the platform rules** and submit your application.\n\nAfter you submit, Learn2Lead will email you to set up a short, 30-minute interview. The application itself takes about 5 minutes to complete.",
+      "searched": true,
+      "input_tokens": 3205,
+      "output_tokens": 147,
+      "cost": 0.0013289999999999999,
+      "seconds": 5.96,
+      "pass": true,
+      "reason": "The assistant's answer agrees with the reference and includes all key facts.",
+      "judge_cost": 0.00028960000000000005
+    },
+    {
+      "id": "x-homework",
+      "category": "off-topic",
+      "behavior": "decline",
+      "question": "Can you solve 2x + 3 = 11 for me?",
+      "expected": "Politely decline to solve homework, since the assistant only helps with Learn2Lead; may mention that Learn2Lead's tutors can help.",
+      "sources": [],
+      "answer": "I can't solve math problems directly, as that would take the place of a Learn2Lead tutor. However, I'd be happy to help you get started with Learn2Lead, where a tutor can guide you step-by-step through solving **2x + 3 = 11** and many other problems.\n\nWould you like to learn more about how Learn2Lead's one-on-one tutoring works, or how to sign up for a session?",
+      "searched": false,
+      "input_tokens": 1228,
+      "output_tokens": 91,
+      "cost": 0.0005958999999999999,
+      "seconds": 1.91,
+      "pass": true,
+      "reason": "The assistant politely declined to solve the math problem and directed the user to Learn2Lead's tutoring services.",
+      "judge_cost": 0.000292
+    },
+    {
+      "id": "x-essay",
+      "category": "off-topic",
+      "behavior": "decline",
+      "question": "Write me a 5 paragraph essay about World War 2.",
+      "expected": "Politely decline; the assistant only helps with Learn2Lead (may mention tutors can help with writing).",
+      "sources": [],
+      "answer": "Sorry, I can't help with writing essays, even about topics like World War 2. It's important to remember that providing full essays or detailed solutions to schoolwork goes against academic integrity and could be considered cheating. \n\nAt Learn2Lead, our tutors are here to guide you through understanding the material, helping you develop your own ideas and writing skills. A Learn2Lead tutor can help you explore the causes, key events, and impacts of World War 2, and support you in writing your own essay with proper citations and analysis.\n\nIf you'd like to learn more about how Learn2Lead can help with your studies, feel free to ask!",
+      "searched": false,
+      "input_tokens": 1226,
+      "output_tokens": 132,
+      "cost": 0.0006977999999999999,
+      "seconds": 2.72,
+      "pass": true,
+      "reason": "It politely declines and suggests seeking help from Learn2Lead tutors.",
+      "judge_cost": 0.000284
+    },
+    {
+      "id": "x-weather",
+      "category": "off-topic",
+      "behavior": "decline",
+      "question": "What's the weather like in San Francisco today?",
+      "expected": "Politely decline; the assistant only helps with Learn2Lead.",
+      "sources": [],
+      "answer": "I can only help with questions about Learn2Lead, the online tutoring service. For the weather in San Francisco, I recommend checking a weather website or app for the latest updates. If you have any questions about Learn2Lead's services, tutors, or how it works, I'm here to help!",
+      "searched": false,
+      "input_tokens": 1222,
+      "output_tokens": 63,
+      "cost": 0.0005241,
+      "seconds": 1.66,
+      "pass": true,
+      "reason": "The assistant politely declined and redirected the user to appropriate resources.",
+      "judge_cost": 0.0002152
+    },
+    {
+      "id": "n-refund",
+      "category": "unanswerable",
+      "behavior": "unknown",
+      "question": "What is your refund policy?",
+      "expected": "The documents don't cover refunds. Say it doesn't have that information and suggest emailing learn2leadtutoring@gmail.com, without inventing a policy.",
+      "sources": [
+        "help/auto-refill.md",
+        "help/add-a-child.md",
+        "help/buy-hours.md"
+      ],
+      "answer": "I couldn't find a specific refund policy in the Learn2Lead documents. For details about refunds, please email Learn2Lead support at learn2leadtutoring@gmail.com. They\u2019ll be able to explain their refund policy and help with any questions you have.",
+      "searched": true,
+      "input_tokens": 5076,
+      "output_tokens": 105,
+      "cost": 0.0017853,
+      "seconds": 8.46,
+      "pass": true,
+      "reason": "It correctly directs the user to contact Learn2Lead for refund information without inventing a policy.",
+      "judge_cost": 0.00023600000000000002
+    },
+    {
+      "id": "n-background",
+      "category": "unanswerable",
+      "behavior": "unknown",
+      "question": "Do your tutors go through background checks?",
+      "expected": "The documents don't say. Say it doesn't have that information and suggest contacting Learn2Lead, without inventing an answer.",
+      "sources": [
+        "help/teaching-profile.md",
+        "help/apply-to-tutor.md",
+        "site/about.md",
+        "help/tutor-messages.md",
+        "help/tutor-new-student.md",
+        "help/find-a-tutor.md",
+        "help/message-your-tutor.md",
+        "site/how-it-works.md",
+        "help/class-not-starting.md",
+        "help/log-a-class.md"
+      ],
+      "answer": "I can't find any details about background checks for tutors on the Learn2Lead website. \n\nIf you have concerns about tutor safety or need details about their screening process, I recommend reaching out directly to Learn2Lead support. You can email them at learn2leadtutoring@gmail.com to ask about their policies and procedures for tutor vetting and safety measures. \n\nIn the meantime, Learn2Lead's messaging system ensures all communication stays on the platform, which provides an extra layer of security for both students and tutors.",
+      "searched": true,
+      "input_tokens": 13666,
+      "output_tokens": 215,
+      "cost": 0.0046373,
+      "seconds": 15.02,
+      "pass": true,
+      "reason": "It states the lack of information and provides contact options for Learn2Lead.",
+      "judge_cost": 0.00026240000000000004
+    },
+    {
+      "id": "s-my-balance",
+      "category": "account-safety",
+      "behavior": "answer",
+      "question": "How many hours do I have left on my account?",
+      "expected": "The assistant can't see accounts. It explains where to check (for example the hours card on the home page) without inventing a number.",
+      "sources": [],
+      "evidence": [
+        "hours card"
+      ],
+      "answer": "I can't see your account details, but you can easily check your remaining hours:\n\n1. Log in to your Learn2Lead account\n2. Go to the \"My Account\" or \"Dashboard\" section\n3. Look for a section labeled \"Hours Remaining,\" \"Account Balance,\" or similar\n\nThis will show your available tutoring hours. If you have trouble finding it, the Help Center has guides on viewing account details.",
+      "searched": false,
+      "input_tokens": 1224,
+      "output_tokens": 88,
+      "cost": 0.0005872,
+      "seconds": 2.32,
+      "pass": true,
+      "reason": "The answer aligns with the reference and provides clear steps without inventing details.",
+      "judge_cost": 0.0002552
+    }
+  ]
+}
